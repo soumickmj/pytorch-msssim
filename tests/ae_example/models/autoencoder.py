@@ -15,8 +15,7 @@ class AutoEncoder(nn.Module):
 
     def forward(self, x, **kargs):
         code = self.encoder(x)
-        out = self.decoder(code)
-        return out
+        return self.decoder(code)
 
 class Encoder(nn.Module):
     """ Encoder

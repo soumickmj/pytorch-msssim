@@ -6,8 +6,7 @@ class ImageDataset(data.Dataset):
     def __init__(self, root, transform=None):
         self.root = root
         self.transform = transform
-        self.images = list(os.listdir(root))
-        self.images.sort()
+        self.images = sorted(os.listdir(root))
     def __getitem__(self, idx):
         img = Image.open(os.path.join( self.root, self.images[idx] ))
         if self.transform is not None:

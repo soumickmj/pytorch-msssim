@@ -57,7 +57,7 @@ def main():
             ImageDataset(root = 'datasets/data/CLIC/train', transform=train_trainsform),
             ImageDataset(root = 'datasets/data/CLIC/valid', transform=train_trainsform),
         ]), batch_size=opts.batch_size, shuffle=True, num_workers=2, drop_last=True)
-     
+
     val_loader = data.DataLoader( 
         ImageDataset( root = 'datasets/data/kodak', transform=val_transform),
         batch_size=1, shuffle=False, num_workers=1)     
@@ -93,7 +93,7 @@ def main():
             images = images.to(device, dtype=torch.float32)
             optimizer.zero_grad()
             outputs = model(images)
-    
+
             loss=criterion(outputs, images) 
             loss.backward()
 
@@ -119,7 +119,7 @@ def main():
 def test(opts, model, val_loader, criterion, device):
     model.eval()
     cur_score = 0.0
-    
+
     metric = ssim if opts.loss_type=='ssim' else ms_ssim
 
     with torch.no_grad():
@@ -128,7 +128,16 @@ def test(opts, model, val_loader, criterion, device):
             outputs= model(images)
             # save the first reconstructed image
             if i==20:
-                Image.fromarray( (outputs*255).squeeze(0).detach().cpu().numpy().astype('uint8').transpose(1,2,0) ).save('recons_%s.png'%(opts.loss_type))
+                Image.fromarray(
+                    (outputs * 255)
+                    .squeeze(0)
+                    .detach()
+                    .cpu()
+                    .numpy()
+                    .astype('uint8')
+                    .transpose(1, 2, 0)
+                ).save(f'recons_{opts.loss_type}.png')
+
             cur_score+=metric(outputs, images, data_range=1.0)
         cur_score /= len(val_loader.dataset)
     return cur_score

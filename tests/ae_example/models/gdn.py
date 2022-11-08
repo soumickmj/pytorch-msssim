@@ -58,10 +58,7 @@ class GDN(nn.Module):
         norm_pool = F.conv2d( x**2, gamma, bias=beta, stride=1, padding=0)
         norm_pool = torch.sqrt(norm_pool)
 
-        if self._inverse:
-            norm_pool = x * norm_pool 
-        else:
-            norm_pool = x / norm_pool  
+        norm_pool = x * norm_pool if self._inverse else x / norm_pool
         return norm_pool
 
         

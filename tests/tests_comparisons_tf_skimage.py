@@ -38,7 +38,7 @@ if __name__ == '__main__':
     for sigma in range(0, 101, 10):
         noise = sigma * np.random.rand(*img.shape)
         img_noise = (img + noise).astype(np.float32).clip(0,255)
-        
+
         img_tf = tf.expand_dims( tf.convert_to_tensor(img),0 )
         img_noise_tf = tf.expand_dims( tf.convert_to_tensor(img_noise),0 )
         begin = time.time()
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     #   MS-SSIM
     ##########
     print('\n')
-    
+
     img_batch = []
     img_noise_batch = []
     single_image_ssim = []
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     for sigma in range(0, 101, 10):
         noise = sigma * np.random.rand(*img.shape)
         img_noise = (img + noise).astype(np.float32).clip(0,255)
-        
+
         img_batch.append(img)
         img_noise_batch.append(img_noise)
 

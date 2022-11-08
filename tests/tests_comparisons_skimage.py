@@ -30,7 +30,7 @@ if __name__ == '__main__':
     for sigma in range(0, 101, 10):
         noise = sigma * np.random.rand(*img.shape)
         img_noise = (img + noise).astype(np.float32).clip(0,255)
-        
+
         begin = time.time()
         for _ in range(N_repeat):
             ssim_skimage = structural_similarity(img, img_noise, win_size=11, multichannel=True,

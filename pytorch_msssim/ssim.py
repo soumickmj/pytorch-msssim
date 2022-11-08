@@ -33,7 +33,7 @@ def gaussian_filter(input, win):
     Returns:
         torch.Tensor: blurred tensors
     """
-    assert all([ws == 1 for ws in win.shape[1:-1]]), win.shape
+    assert all(ws == 1 for ws in win.shape[1:-1]), win.shape
     if len(input.shape) == 4:
         conv = F.conv2d
     elif len(input.shape) == 5:
@@ -122,7 +122,7 @@ def ssim(
     Returns:
         torch.Tensor: ssim results
     """
-    if not X.shape == Y.shape:
+    if X.shape != Y.shape:
         raise ValueError("Input images should have the same dimensions.")
 
     for d in range(len(X.shape) - 1, 1, -1):
@@ -132,13 +132,13 @@ def ssim(
     if len(X.shape) not in (4, 5):
         raise ValueError(f"Input images should be 4-d or 5-d tensors, but got {X.shape}")
 
-    if not X.type() == Y.type():
+    if X.type() != Y.type():
         raise ValueError("Input images should have the same dtype.")
 
     if win is not None:  # set win_size
         win_size = win.shape[-1]
 
-    if not (win_size % 2 == 1):
+    if win_size % 2 != 1:
         raise ValueError("Window size should be odd.")
 
     if win is None:
@@ -149,10 +149,7 @@ def ssim(
     if nonnegative_ssim:
         ssim_per_channel = torch.relu(ssim_per_channel)
 
-    if size_average:
-        return ssim_per_channel.mean()
-    else:
-        return ssim_per_channel.mean(1)
+    return ssim_per_channel.mean() if size_average else ssim_per_channel.mean(1)
 
 
 def ms_ssim(
@@ -173,14 +170,14 @@ def ms_ssim(
     Returns:
         torch.Tensor: ms-ssim results
     """
-    if not X.shape == Y.shape:
+    if X.shape != Y.shape:
         raise ValueError("Input images should have the same dimensions.")
 
     for d in range(len(X.shape) - 1, 1, -1):
         X = X.squeeze(dim=d)
         Y = Y.squeeze(dim=d)
 
-    if not X.type() == Y.type():
+    if X.type() != Y.type():
         raise ValueError("Input images should have the same dtype.")
 
     if len(X.shape) == 4:
@@ -193,7 +190,7 @@ def ms_ssim(
     if win is not None:  # set win_size
         win_size = win.shape[-1]
 
-    if not (win_size % 2 == 1):
+    if win_size % 2 != 1:
         raise ValueError("Window size should be odd.")
 
     smaller_side = min(X.shape[-2:])
@@ -225,10 +222,7 @@ def ms_ssim(
     mcs_and_ssim = torch.stack(mcs + [ssim_per_channel], dim=0)  # (level, batch, channel)
     ms_ssim_val = torch.prod(mcs_and_ssim ** weights.view(-1, 1, 1), dim=0)
 
-    if size_average:
-        return ms_ssim_val.mean()
-    else:
-        return ms_ssim_val.mean(1)
+    return ms_ssim_val.mean() if size_average else ms_ssim_val.mean(1)
 
 
 class SSIM(torch.nn.Module):
